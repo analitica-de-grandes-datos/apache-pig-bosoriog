@@ -14,6 +14,12 @@ evaluación, pig sera eejcutado ejecutado en modo local:
 
 $ pig -x local -f pregunta.pig
 
-        >>> Escriba su respuesta a partir de este punto <<<
-*/
 
+*/
+rmf output
+df = LOAD 'data.tsv' AS (letra:CHARARRAY,dicc:BAG{},lista:MAP[]);
+columnas = FOREACH df GENERATE FLATTEN(dicc) as dicc, FLATTEN(KEYSET(lista)) as llave;
+grupos = GROUP columnas by (dicc,llave);
+df_final = FOREACH grupos GENERATE group, COUNT(columnas);
+
+STORE df_final INTO 'output' USING PigStorage (',');

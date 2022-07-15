@@ -20,4 +20,8 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
-
+rmf output
+df = LOAD 'data.csv' USING PigStorage(',') AS (indice:int,nombre:CHARARRAY,apellido:CHARARRAY,fecha:CHARARRAY,color:CHARARRAY,valor:int) ;
+df_final = FOREACH df GENERATE apellido, SIZE(apellido) as longitud_ap;
+df_sort = ORDER df_final BY longitud_ap desc, apellido asc;
+STORE df_sort INTO 'output' USING PigStorage (',');
