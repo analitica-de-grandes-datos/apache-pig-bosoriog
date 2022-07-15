@@ -14,3 +14,11 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
+rmf output
+
+df = LOAD 'data.tsv' AS (letra:CHARARRAY,dicc:BAG{},lista:MAP[]);
+llaves = FOREACH df GENERATE FLATTEN(KEYSET(lista)) as llave;
+grupos = GROUP llaves BY llave;
+grupo_count = FOREACH grupos GENERATE group, COUNT(llaves);
+
+STORE grupo_count INTO 'output' USING PigStorage (',');

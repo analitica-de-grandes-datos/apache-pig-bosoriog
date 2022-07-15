@@ -12,3 +12,7 @@ $ pig -x local -f pregunta.pig
 
      >>> Escriba el codigo del mapper a partir de este punto <<<
 */
+rmf output
+df = LOAD 'data.tsv' AS (letra:CHARARRAY,fecha:CHARARRAY,valor:int);
+df_sort = ORDER df BY letra, valor asc;
+STORE df_sort INTO 'output' USING PigStorage (',');

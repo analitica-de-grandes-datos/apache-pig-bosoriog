@@ -31,6 +31,25 @@ evaluación, pig sera eejcutado ejecutado en modo local:
 
 $ pig -x local -f pregunta.pig
 
-        >>> Escriba su respuesta a partir de este punto <<<
+       
 */
 
+rmf output
+df = LOAD 'data.csv' USING PigStorage(',') AS (indice:int,nombre:CHARARRAY,apellido:CHARARRAY,fecha:DATETIME,color:CHARARRAY,valor:int) ;
+df_final_aux = FOREACH df GENERATE ToString(fecha,'yyyy-MM-dd'), ToString(fecha,'dd'),ToString(fecha,'d'), LOWER(ToString(fecha,'EEEE'));
+
+df_final_aux_2 = FOREACH df_final_aux GENERATE $0, 
+                        $1, 
+                        $2,  
+                        CASE $3
+                              WHEN 'monday' THEN 'lunes' 
+                              WHEN 'tuesday' THEN 'martes'
+                              WHEN 'wednesday' THEN 'miercoles'
+                              WHEN 'thursday' THEN 'jueves'
+                              WHEN 'friday' THEN 'viernes'
+                              WHEN 'saturday' THEN 'sabado'
+                              ELSE 'domingo' END;
+
+df_final = FOREACH df_final_aux_2 GENERATE $0,$1,$2,SUBSTRING($3,0,3),$3;
+
+STORE df_final INTO 'output' USING PigStorage (',');

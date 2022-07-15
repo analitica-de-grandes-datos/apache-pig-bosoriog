@@ -16,7 +16,10 @@ evaluación, pig sera eejcutado ejecutado en modo local:
 
 $ pig -x local -f pregunta.pig
 
-        >>> Escriba su respuesta a partir de este punto <<<
+        
 */
-
+rmf output
+df = LOAD 'data.csv' USING PigStorage(',') AS (indice:int,nombre:CHARARRAY,apellido:CHARARRAY,fecha:CHARARRAY,color:CHARARRAY,valor:int) ;
+df_final = FOREACH df GENERATE  REGEX_EXTRACT(fecha, '([0-9]*)-([0-9][0-9])-([0-9][0-9])', 2);
+STORE df_final INTO 'output' USING PigStorage (',');
 

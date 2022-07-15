@@ -14,3 +14,9 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
+rmf output
+df = LOAD 'data.tsv' AS (letra:CHARARRAY,dicc:BAG{},lista:MAP[]);
+conteos = foreach df generate letra, SIZE(dicc) as dicc, SIZE(lista) as lista;
+df_sort = ORDER conteos BY letra asc, dicc asc, lista asc;
+
+STORE df_sort INTO 'output' USING PigStorage (',');

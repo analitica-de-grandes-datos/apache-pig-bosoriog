@@ -12,3 +12,14 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
+rmf output
+
+df = LOAD 'data.tsv' AS (letra:CHARARRAY,fecha:datetime,valor:int);
+
+columnas = FOREACH df GENERATE letra;
+
+grouped = GROUP columnas BY letra;
+
+wordcount = FOREACH grouped GENERATE group, COUNT(columnas);
+
+STORE wordcount INTO 'output' USING PigStorage (',');
